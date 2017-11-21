@@ -59,45 +59,41 @@ class ExceptionHandler
     }
 
     public static function exception_handler(\Exception $exception){
+        //error_reporting(E_ERROR | E_WARNING | E_PARSE);
         header("Content-Type:". self::$contentType);
-        header(self::$httpVersion. " ". $exception->getCode() ." ".self::getHttpStatusMessage($exception->getCode()));
         if ($exception instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException){
-
+            $statusCode = 404;
+            header(self::$httpVersion. " ". $statusCode ." " . self::getHttpStatusMessage($statusCode));
             echo json_encode([
-                'statusCode'=>404,
+                'statusCode'=>$statusCode,
                 'message'=>'api not found',
                 'file'=>'',
                 'line'=>'',
                 'stackTrace'=>'',
                 'error_id'=>'NOT_FOUND'
             ]);die();
-        }elseif($exception instanceof \Exception and get_class($exception) != 'Symfony\Component\Debug\Exception\FatalThrowableError'){
+        }elseif($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
+            $statusCode = 405;
+            header('HTTP/1.1' . " " . $statusCode . " Method Not Allowed");
             echo json_encode([
-                'statusCode'=>$exception->getCode(),
-                'message'=>$exception->getMessage(),
-                'file'=>'',
-                'line'=>'',
-                'stackTrace'=>'',
-                'error_id'=>method_exists($exception,'getErrorId')?$exception->getErrorId():'ERROR'
-            ]);die();
-        }
-        elseif($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException){
-            echo json_encode([
-                'statusCode'=>405,
-                'message'=>'Method Not Allowed',
-                'file'=>'',
-                'line'=>'',
-                'stackTrace'=>'',
-                'error_id'=>''
-            ]);die();
+                'statusCode' => $statusCode,
+                'message' => 'Method Not Allowed',
+                'file' => '',
+                'line' => '',
+                'stackTrace' => '',
+                'error_id' => ''
+            ]);
+            die();
         }else{
+            $statusCode = $exception->getCode() == 0 ? 500:$exception->getCode();
+            header(self::$httpVersion. " ". $statusCode ." " . self::getHttpStatusMessage($statusCode));
             echo json_encode([
-                'statusCode'=>$exception->getCode(),
+                'statusCode'=>$statusCode,
                 'message'=>$exception->getMessage(),
                 'file'=>$exception->getFile(),
                 'line'=>$exception->getLine(),
                 'stackTrace'=>$exception->getTrace(),
-                'error_id'=>'SEVER_ERROR'
+                'error_id'=>method_exists($exception,'getErrorId')?$exception->getErrorId():'SEVER_ERROR'
             ]);die();
         }
 
