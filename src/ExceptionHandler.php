@@ -54,7 +54,7 @@ class ExceptionHandler
             503 => 'Service Unavailable',
             504 => 'Gateway Timeout',
             505 => 'HTTP Version Not Supported');
-        return ($httpStatus[$statusCode]) ? $httpStatus[$statusCode] : $httpStatus[500];
+        return isset($httpStatus[$statusCode])?$httpStatus[$statusCode]:$httpStatus[400];
 
     }
 
@@ -74,7 +74,7 @@ class ExceptionHandler
             ]);die();
         }elseif($exception instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
             $statusCode = 405;
-            header('HTTP/1.1' . " " . $statusCode . " Method Not Allowed");
+            header(self::$httpVersion. " ". $statusCode ." " . self::getHttpStatusMessage($statusCode));
             echo json_encode([
                 'statusCode' => $statusCode,
                 'message' => 'Method Not Allowed',
