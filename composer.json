@@ -1,9 +1,10 @@
 {
     "name": "linyuee/laravel-exception",
     "description": "laravel exception handler",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "require": {
-        "php": ">=5.3"
+        "php": ">=5.4",
+        "laravel/framework": ">=5.1"
     },
     "require-dev": {
     },
