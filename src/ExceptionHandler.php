@@ -54,7 +54,7 @@ class ExceptionHandler
             503 => 'Service Unavailable',
             504 => 'Gateway Timeout',
             505 => 'HTTP Version Not Supported');
-        return isset($httpStatus[$statusCode])?$httpStatus[$statusCode]:$httpStatus[400];
+        return isset($httpStatus[$statusCode])?$httpStatus[$statusCode]:$httpStatus[500];
 
     }
 
