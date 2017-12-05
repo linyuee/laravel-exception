@@ -61,7 +61,7 @@ class ExceptionHandler
     public static function exception_handler(\Exception $exception){
         header("Content-Type:". self::$contentType);
         $statusCode = method_exists($exception,'getStatusCode')?$exception->getStatusCode():$exception->getCode();
-        header(self::$httpVersion. " ". $statusCode ." " . self::getHttpStatusMessage($statusCode));
+        header(self::$httpVersion. " ". ($statusCode = $statusCode == 0? 500 : $statusCode) ." " . self::getHttpStatusMessage($statusCode));
         $response = array(
             'data'=>[],
             'status_code'=>$statusCode == 0?500:$statusCode,
